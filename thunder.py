@@ -1,46 +1,34 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-import Queue
-
 import tornado.ioloop
 import tornado.web
-
-data = Queue.Queue()
+tasks = []
 
 def getTask():
-    tasks = []
-    fp = open('task.txt', 'r+')
-    lines = fp.readlines()
-    i = 0
-    for line in lines:
-        tasks.append(line)
-    fp.close()
-    return tasks
+    returnList = []
+    for line in tasks:
+        returnList.append("%s\n%s" % (line["url"], line["path"]))
+    return returnList
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         print "get"
-        self.tasks = getTask()
-        if len(self.tasks) == 0:
-            #self.write("")
-            self.render("index.tpl",tasks=[])
+        if len(tasks) == 0:
+            self.render("index.tpl",tasks = [])
         else:
-            self.render("index.tpl", tasks=self.tasks)
+            self.render("index.tpl", tasks = getTask())
 
     def post(self):
         print "post"
-        fp = open('task.txt', 'a')
-        url = self.get_argument("down_address")
-        path = self.get_argument("user_id")
+        url = self.get_argument("url")
+        path = self.get_argument("path")
+        task = {}
         if url and path:
-            task = "%s %s\n" % (url, path)
-            fp.writelines(task)
-            fp.flush()
-            data.put(task)
-            fp.close()
-            self.tasks = getTask()
-            self.render("index.tpl", tasks=self.tasks)
+            task["url"] = url
+            task["path"] = path
+            tasks.append(task)
+            self.render("index.tpl", tasks = getTask())
         else:
             self.write("error")
 
@@ -49,16 +37,10 @@ class MainHandler(tornado.web.RequestHandler):
 class task(tornado.web.RequestHandler):
     def get(self):
         print 'get'
-        self.taskList = ''
-        self.tasks = getTask()
-        if len(self.tasks) != 0:
-            for task in self.tasks:
-                self.taskList += task
-            fp = open('task.txt', 'w+')
-            for i in range(len(self.tasks)-1):
-                fp.write(self.tasks[i+1])
-            fp.flush()
-            self.write(self.tasks[0])
+        if len(tasks):
+            returnTask = '%s\n%s' % (tasks[0]["url"], tasks[0]["path"])
+            self.write(returnTask)
+            tasks.remove(tasks[0])
         else:
             self.write('')
 

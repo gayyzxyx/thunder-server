@@ -15,10 +15,9 @@
             <div class="tab-pane active in fade" id="file-download">
                 <form class="form-search" action="/download" method="post">
                     <h2 style="margin-bottom: 10px">File Address:</h2>
-
                     <div class="input-append">
-                        <input type="text" class="input-xxlarge" id="down_address" name="down_address">
-                        <input type="text" class="span2" id="user_id" name="user_id">
+                        <input type="text" class="input-xxlarge" id="url" name="url">
+                        <input type="text" class="span2" id="path" name="path">
                         <button type="submit" class="btn">download</button>
                     </div>
                 </form>
@@ -26,27 +25,13 @@
                     <thead>
                     <tr>
                         <td style="word-wrap: break-word" width="60%"><p class="lead text-center">Address</p></td>
-                        <td style="word-wrap: break-word" width="20%"><p class="lead text-center">User</p></td>
-                        <td style="word-wrap: break-word" width="20%"><p class="lead text-center">Operation</p></td>
+                        <td style="word-wrap: break-word" width="20%"><p class="lead text-center">Folder</p></td>
                     </tr>
                     </thead>
                     {% for task in tasks %}
                         <tr>
-                            <td id="address">{{task.split(' ')[0]}}</td>
-                            <td id="user">{{task.split(' ')[1]}}</td>
-                            <td style="text-align: center">
-                                <div class="btn-group">
-                                    <button class="btn">Action</button>
-                                    <button class="btn dropdown-toggle" data-toggle="dropdown">
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#" onclick='' data-toggle="popver" data-placement="right" title
-                                               data-original-title="Attention">delete</a></li>
-                                        <li><a href="#" onclick='' data-toggle="modal" role="button">rename</a></li>
-                                    </ul>
-                                </div>
-                            </td>
+                            <td id="address">{{task.split('\n')[0]}}</td>
+                            <td id="user">{{task.split('\n')[1]}}</td>
                         </tr>
                     {% end %}
                 </table>
